@@ -16,6 +16,14 @@ function getJSON(url, callback) {
   xhr.send();
 }
 
+
+function getProfiles(jsonData){
+  jsonData.people.map(person => {
+    getJSON(wikiUrl + person.name, generateHTML)//No parentheses for generateHTML because the function is not being invoked right away. This is only a reference for when the jsonData becomes available.
+  });
+
+}
+
 // Generate the markup for each profile
 function generateHTML(data) {
   const section = document.createElement('section');
@@ -39,14 +47,8 @@ function generateHTML(data) {
 }
 
 btn.addEventListener('click', (event) => {
-  
-  getJSON(astrosUrl, (jsonData) => {
-    jsonData.people.map(person => {
-      getJSON(wikiUrl + person.name, generateHTML)//No parentheses for generateHTML because the function is not being invoked right away. This is only a reference for when the jsonData becomes available.
-    });
-  });
-
+  getJSON(astrosUrl, getProfiles);
   //Remove button when element is displayed
   event.target.remove();
-  
+
 });
