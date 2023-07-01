@@ -38,12 +38,15 @@ function generateHTML(data) {
   }
 }
 
-btn.addEventListener('click', () => {
+btn.addEventListener('click', (event) => {
   
   getJSON(astrosUrl, (jsonData) => {
     jsonData.people.map(person => {
       getJSON(wikiUrl + person.name, generateHTML)//No parentheses for generateHTML because the function is not being invoked right away. This is only a reference for when the jsonData becomes available.
     });
   });
+
+  //Remove button when element is displayed
+  event.target.remove();
   
 });
