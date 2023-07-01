@@ -37,3 +37,5 @@ function generateHTML(data) {
     `;
   }
 }
+
+btn.addEventListener('click', () => getJSON(astrosUrl));
