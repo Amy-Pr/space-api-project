@@ -8,7 +8,7 @@ function getJSON(url) {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url);
     xhr.onload = () => {
-      if(xhr.status === 200) {
+      if(xhr.status === 200 || xhr.status === 404) {
         let data = JSON.parse(xhr.responseText);
         console.log(data);
         resolve(data);

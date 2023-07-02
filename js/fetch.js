@@ -7,8 +7,11 @@ const btn = document.querySelector('button');
 
 function getProfiles(json) {
   const profiles = json.people.map( person => {
-    return getJSON(wikiUrl + person.name);      
+    return fetch(wikiUrl + person.name)
+        .then(response => response.json())
+        .catch(err => console.log('Error Fetching Wiki: ', err))
   }); 
+  console.log(profiles);
   return Promise.all(profiles);
 }
 
@@ -39,6 +42,7 @@ btn.addEventListener('click', (event) => {
   event.target.textContent = "Loading...";
 
   fetch(astrosUrl)
+    .then(response=>response.json()) //reads the response and returns a promise that resolves to json
     .then(getProfiles)
     .then(generateHTML)
     .catch( err => {
