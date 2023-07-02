@@ -26,7 +26,8 @@ function getProfiles(json) {
   const profiles = json.people.map( person => {
     return getJSON(wikiUrl + person.name);//Don't need a callback anymore so got rid of generateHTML
   });
-  return profiles; //Waits for all the objects to be returned before sending back the full array.
+  // return profiles; //Waits for all the objects to be returned before sending back the full array.
+  return Promise.all(profiles);
 }
 
 // Generate the markup for each profile
@@ -56,9 +57,12 @@ function generateHTML(data) {
 }
 
 btn.addEventListener('click', (event) => {
+  event.target.textContent = "Loading...";
   getJSON(astrosUrl) //we got rid of the callback function parameter above and replaced with a Promise constructor
     .then(getProfiles) //Now getProfiles doesn't need to be passed as a callback in the parent function, but instead chained through the 'then' method. It will be ran sequentially after info back from astroUrl
     .then(generateHTML) //passes the final result into the generateHTML function
-    .catch(error => console.log(error))
-    event.target.remove()
+    .catch(error => {
+      peopleList.innerHTML = '<h3>Something went wrong!</h3>' 
+      console.log(error)})
+    .finally(() => event.target.remove()) //called when a promise is fully settled regardless of fulfilled or rejected
 });
