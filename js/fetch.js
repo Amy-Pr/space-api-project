@@ -7,8 +7,12 @@ const btn = document.querySelector('button');
 
 function getProfiles(json) {
   const profiles = json.people.map( person => {
+    const craft = person.craft;
     return fetch(wikiUrl + person.name)
         .then(response => response.json())
+        .then( profile => {
+          return {...profile, craft}
+        })
         .catch(err => console.log('Error Fetching Wiki: ', err))
   }); 
   console.log(profiles);
@@ -23,6 +27,7 @@ function generateHTML(data) {
     if (person.type === 'standard') {
       section.innerHTML = `
         <img src=${person.thumbnail.source}>
+        <span>${person.craft}</span>
         <h2>${person.title}</h2>
         <p>${person.description}</p>
         <p>${person.extract}</p>
@@ -30,6 +35,7 @@ function generateHTML(data) {
     } else {
       section.innerHTML = `
         <img src="img/profile.jpg" alt="ocean clouds seen from space">
+        <span>${person.craft}</span>
         <h2>${person.title}</h2>
         <p>Results unavailable for ${person.title}</p>
         ${person.extract_html}
