@@ -4,17 +4,29 @@ const peopleList = document.getElementById('people');
 const btn = document.querySelector('button');
 
 // Handle all fetch requests
-//This function is like getProfiles function in promises.js. It is going to return
+async function getJSON(url) {
+  try {
+    const response = await fetch(url);
+    return await response.json(); //await for the response to resolve or reject
+  } catch (error) {
+    throw error; 
+
+  }
+}
+
+
+//This function is like getProfiles function in promises.js and fetch.js. It is going to return
 //an array of promise objects saved to variable profiles.
 async function getPeopleInSpace(url) { 
-  const peopleResponse = await fetch(url); //wait for a resolved promise returned by fetch and get value
-  const peopleJSON = await peopleResponse.json(); //read the response and await the JSON
+  //const peopleResponse = await fetch(url); //wait for a resolved promise returned by fetch and get value
+  //const peopleJSON = await peopleResponse.json(); //read the response and await the JSON
+    const peopleJSON = await getJSON(url);
 
   //Based on the return names
   const profiles = peopleJSON.people.map(async person => { //The callback needs to be marked as async for await to be used.
     const craft = person.craft;
-    const profileResponse = await fetch(wikiUrl + person.name);
-    const profileJSON = await profileResponse.json();
+    //const profileResponse = await fetch(wikiUrl + person.name);
+    const profileJSON = await getJSON(wikiUrl + person.name);
 
     return {...profileJSON, craft};
   });
@@ -59,6 +71,10 @@ btn.addEventListener('click', (event) => {
   event.target.textContent = "Loading...";
   getPeopleInSpace(astrosUrl)
     .then(generateHTML)
+    .catch( err => {
+      peopleList.innerHTML = '<h3>Something went wrong!</h3>';
+      console.error(err);
+    })
     .finally(() => event.target.remove())
 
 });
