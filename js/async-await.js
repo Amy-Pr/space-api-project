@@ -4,7 +4,24 @@ const peopleList = document.getElementById('people');
 const btn = document.querySelector('button');
 
 // Handle all fetch requests
+//This function is like getProfiles function in promises.js. It is going to return
+//an array of promise objects saved to variable profiles.
+async function getPeopleInSpace(url) { 
+  const peopleResponse = await fetch(url); //wait for a resolved promise returned by fetch and get value
+  const peopleJSON = await peopleResponse.json(); //read the response and await the JSON
 
+  //Based on the return names
+  const profiles = peopleJSON.people.map(async person => { //The callback needs to be marked as async for await to be used.
+    const craft = person.craft;
+    const profileResponse = await fetch(wikiUrl + person.name);
+    const profileJSON = await profileResponse.json();
+
+    return {...profileJSON, craft};
+  });
+
+  return Promise.all(profiles);
+
+}
 
 // Generate the markup for each profile
 function generateHTML(data) {
@@ -31,7 +48,10 @@ function generateHTML(data) {
   });
 }
 
-btn.addEventListener('click', (event) => {
+btn.addEventListener('click', async (event) => {
   event.target.textContent = "Loading...";
+  const astros = await getPeopleInSpace(astrosUrl);
+  generateHTML(astros);
+  event.target.remove();
 
 });
